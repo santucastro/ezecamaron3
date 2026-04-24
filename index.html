@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eze Camarón — Productor Musical & Sonidista</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: oklch(8% 0.015 265);
+    --bg2: oklch(11% 0.012 265);
+    --fg: oklch(93% 0.008 80);
+    --muted: oklch(55% 0.01 265);
+    --accent: #C9A84C;
+    --accent-glow: rgba(201,168,76,0.35);
+    --accent2: oklch(70% 0.16 195);
+    --border: oklch(20% 0.01 265);
+    --ff-display: 'Space Grotesk', sans-serif;
+    --ff-body: 'DM Sans', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--ff-body);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.35;
+  }
+
+  /* CURSOR */
+  #cursor {
+    position: fixed; width: 10px; height: 10px;
+    background: var(--accent); border-radius: 50%;
+    pointer-events: none; z-index: 10000;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s, width 0.3s, height 0.3s;
+    mix-blend-mode: difference;
+  }
+  #cursor-ring {
+    position: fixed; width: 36px; height: 36px;
+    border: 1px solid rgba(201,168,76,0.5); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.18s ease, opacity 0.3s;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.5rem 3rem;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.4s, background 0.4s, backdrop-filter 0.4s;
+  }
+  nav.scrolled {
+    border-color: var(--border);
+    background: oklch(8% 0.015 265 / 0.85);
+    backdrop-filter: blur(20px);
+  }
+  .nav-logo {
+    font-family: var(--ff-display); font-weight: 700;
+    font-size: 1rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--fg); text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); text-decoration: none; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--fg); }
+  .nav-cta {
+    font-family: var(--ff-display); font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: #0a0a0f; background: var(--accent);
+    padding: 0.55rem 1.4rem; border-radius: 100px;
+    text-decoration: none; transition: opacity 0.2s, transform 0.2s;
+  }
+  .nav-cta:hover { opacity: 0.85; transform: scale(1.03); }
+
+  /* HERO */
+  #hero {
+    min-height: 100svh;
+    display: grid; grid-template-columns: 1fr 1fr;
+    position: relative; overflow: hidden;
+  }
+  .hero-left {
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 3rem 4rem; padding-top: 8rem;
+    position: relative; z-index: 2;
+  }
+  .hero-tag {
+    font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .hero-tag::before { content:''; width:2rem; height:1px; background:var(--accent); display:block; }
+  h1.hero-title {
+    font-family: var(--ff-display); font-size: clamp(4.5rem, 9vw, 9rem);
+    font-weight: 700; line-height: 0.9; letter-spacing: -0.03em;
+    text-transform: uppercase; margin-bottom: 2rem;
+  }
+  .glitch { position: relative; display: inline-block; }
+  .glitch::before, .glitch::after {
+    content: attr(data-text); position: absolute; inset: 0;
+    background: var(--bg);
+  }
+  .glitch::before {
+    color: var(--accent2);
+    animation: glitch1 4s infinite;
+    clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%);
+  }
+  .glitch::after {
+    color: var(--accent);
+    animation: glitch2 4s infinite;
+    clip-path: polygon(0 60%, 100% 60%, 100% 75%, 0 75%);
+  }
+  @keyframes glitch1 {
+    0%,90%,100%{transform:translate(0);opacity:0}
+    92%{transform:translate(-3px,1px);opacity:0.8}
+    94%{transform:translate(3px,-1px);opacity:0.8}
+    96%{transform:translate(0);opacity:0}
+  }
+  @keyframes glitch2 {
+    0%,88%,100%{transform:translate(0);opacity:0}
+    90%{transform:translate(3px,2px);opacity:0.7}
+    93%{transform:translate(-3px,-1px);opacity:0.7}
+    95%{transform:translate(0);opacity:0}
+  }
+  .hero-desc {
+    font-size: 1.1rem; color: var(--muted); max-width: 32ch;
+    line-height: 1.7; margin-bottom: 2.5rem;
+  }
+  .hero-desc strong { color: var(--fg); font-weight: 500; }
+  .hero-actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+  .btn-primary {
+    font-family: var(--ff-display); font-size: 0.85rem; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: #0a0a0f; background: var(--accent);
+    padding: 0.9rem 2rem; border-radius: 100px; text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px var(--accent-glow); }
+  .btn-ghost {
+    font-family: var(--ff-display); font-size: 0.85rem; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--fg); background: transparent;
+    padding: 0.9rem 2rem; border-radius: 100px;
+    border: 1px solid var(--border); text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--fg); }
+
+  .hero-right { position: relative; overflow: hidden; }
+  .hero-img {
+    width: 100%; height: 100%; object-fit: cover; object-position: center top;
+    opacity: 0.65; filter: grayscale(20%); display: block;
+  }
+  .hero-img-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, var(--bg) 0%, transparent 40%),
+                linear-gradient(0deg, var(--bg) 0%, transparent 35%);
+  }
+  .hero-stats {
+    position: absolute; bottom: 4rem; left: 3rem;
+    display: flex; gap: 3rem; z-index: 3;
+  }
+  .stat-number {
+    font-family: var(--ff-display); font-size: 2.5rem; font-weight: 700;
+    line-height: 1; color: var(--fg);
+  }
+  .stat-number span { color: var(--accent); }
+  .stat-label {
+    font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); margin-top: 0.3rem;
+  }
+  .waveform-hero {
+    position: absolute; bottom: 0; right: 0; width: 55%; height: 120px;
+    z-index: 3; display: flex; align-items: flex-end; gap: 3px; padding: 0 2rem 1.5rem;
+  }
+  .waveform-hero .bar {
+    flex: 1; background: var(--accent); border-radius: 2px 2px 0 0;
+    opacity: 0.6;
+    animation: wave var(--dur,0.8s) ease-in-out infinite alternate;
+    animation-delay: var(--delay,0s); transform-origin: bottom;
+  }
+  @keyframes wave { from{transform:scaleY(0.15)} to{transform:scaleY(1)} }
+
+  /* MARQUEE */
+  .marquee-wrap {
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    padding: 1rem 0; overflow: hidden; background: var(--bg2);
+  }
+  .marquee-track {
+    display: flex; gap: 3rem; width: max-content;
+    animation: marquee 25s linear infinite;
+  }
+  .marquee-item {
+    font-family: var(--ff-display); font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+    white-space: nowrap; display: flex; align-items: center; gap: 1.5rem;
+  }
+  .marquee-item .dot { width:4px; height:4px; background:var(--accent); border-radius:50%; flex-shrink:0; }
+  @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+  /* SECTIONS */
+  section { padding: 7rem 3rem; }
+  .section-label {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--accent); display: flex; align-items: center; gap: 0.75rem;
+    margin-bottom: 3rem;
+  }
+  .section-label::before { content:''; width:1.5rem; height:1px; background:var(--accent); }
+  h2.section-title {
+    font-family: var(--ff-display); font-size: clamp(3rem,6vw,6rem);
+    font-weight: 700; line-height: 0.95; letter-spacing: -0.03em; text-transform: uppercase;
+  }
+
+  /* ABOUT */
+  #about {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6rem;
+    align-items: start; padding-top: 5rem;
+  }
+  .about-photo-wrap { position: relative; overflow: hidden; border-radius: 4px; }
+  .about-photo-wrap img {
+    width: 100%; aspect-ratio: 3/4; object-fit: cover; object-position: center top;
+    display: block; filter: grayscale(15%); transition: transform 0.6s;
+  }
+  .about-photo-wrap:hover img { transform: scale(1.04); }
+  .about-photo-accent {
+    position: absolute; bottom: 1.5rem; left: 1.5rem;
+    background: var(--accent); color: #0a0a0f;
+    font-family: var(--ff-display); font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 0.5rem 1rem; border-radius: 100px;
+  }
+  .about-right { padding-top: 1rem; }
+  .about-body {
+    font-size: 1.05rem; color: oklch(75% 0.008 265); line-height: 1.8;
+    margin-top: 2rem; margin-bottom: 2.5rem;
+  }
+  .about-body strong { color: var(--fg); font-weight: 500; }
+  .artists-list { border-top: 1px solid var(--border); padding-top: 1.5rem; }
+  .artists-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.75rem; }
+  .artists-names { font-size: 0.9rem; color: oklch(60% 0.01 265); line-height: 1.8; }
+
+  /* SERVICES */
+  #services {
+    background: var(--bg2);
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  }
+  .services-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 4rem; flex-wrap: wrap; gap: 2rem;
+  }
+  .services-grid {
+    display: grid; grid-template-columns: repeat(4,1fr);
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border); border-radius: 6px; overflow: hidden;
+  }
+  .service-card {
+    background: var(--bg2); padding: 2.5rem 2rem;
+    transition: background 0.3s; position: relative; overflow: hidden;
+  }
+  .service-card:hover { background: oklch(14% 0.012 265); }
+  .service-card::after {
+    content:''; position:absolute; bottom:0; left:0;
+    width:0; height:2px; background:var(--accent); transition:width 0.4s;
+  }
+  .service-card:hover::after { width:100%; }
+  .service-num {
+    font-family: var(--ff-display); font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.15em; color: var(--accent); margin-bottom: 1.5rem;
+  }
+  .service-icon {
+    width: 48px; height: 48px; margin-bottom: 1.5rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .service-icon svg { width: 36px; height: 36px; }
+  .service-name {
+    font-family: var(--ff-display); font-size: 1.1rem; font-weight: 700;
+    letter-spacing: -0.02em; margin-bottom: 0.75rem; text-transform: uppercase;
+  }
+  .service-desc { font-size: 0.875rem; color: var(--muted); line-height: 1.7; }
+
+  /* EQ animation for waveform icon */
+  .eq-bars { display:flex; gap:4px; align-items:flex-end; height:32px; }
+  .eq-bar {
+    width:5px; background:var(--accent); border-radius:2px; opacity:0.7;
+    animation: eq var(--d,0.7s) ease-in-out infinite alternate;
+    animation-delay: var(--delay,0s);
+  }
+  .service-card:hover .eq-bar { opacity:1; }
+  @keyframes eq { from{height:var(--min,4px)} to{height:var(--max,28px)} }
+
+  /* MIX & MASTER */
+  #works { padding: 7rem 3rem; }
+  .works-inner {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start;
+    margin-bottom: 4rem;
+  }
+  .works-body {
+    font-size: 1.05rem; color: oklch(65% 0.01 265);
+    line-height: 1.8; margin-top: 1.5rem; margin-bottom: 2rem;
+  }
+  .works-img-wrap { position: relative; border-radius: 6px; overflow: hidden; }
+  .works-img-wrap img {
+    width: 100%; aspect-ratio: 4/3; object-fit: cover;
+    filter: grayscale(20%); display: block; transition: transform 0.6s;
+  }
+  .works-img-wrap:hover img { transform: scale(1.03); }
+  .works-badge {
+    position: absolute; top: 1.5rem; right: 1.5rem;
+    background: oklch(8% 0.015 265 / 0.85); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 0.75rem 1rem; font-size: 0.75rem;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+  }
+  .works-badge span { color: var(--accent); display: block; font-size: 1rem; font-weight: 700; }
+
+  /* Spotify embeds */
+  .spotify-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  .spotify-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 8px; overflow: hidden;
+  }
+  .spotify-label {
+    padding: 1rem 1.25rem 0.5rem;
+    font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .spotify-label strong { color: var(--fg); display: block; font-size: 0.9rem; letter-spacing: 0; text-transform: none; margin-bottom: 0.15rem; }
+  .spotify-card iframe { display: block; width: 100%; border: none; }
+
+  /* VIDEOS */
+  #videos { background: var(--bg2); border-top: 1px solid var(--border); }
+  .videos-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 3.5rem; flex-wrap: wrap; gap: 2rem;
+  }
+  .videos-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.5rem; }
+  .video-embed-wrap {
+    position: relative; border-radius: 6px; overflow: hidden;
+    background: #000; aspect-ratio: 16/9;
+    border: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .video-embed-wrap iframe { width:100%; height:100%; border:none; display:block; }
+  .video-thumb { position:relative; display:block; aspect-ratio:16/9; overflow:hidden; border-radius:6px; border:1px solid var(--border); cursor:pointer; }
+  .video-thumb img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.5s, opacity 0.3s; opacity:0.75; }
+  .video-thumb:hover img { transform:scale(1.04); opacity:0.55; }
+  .video-thumb .play-overlay {
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,0.25); transition:background 0.3s;
+  }
+  .video-thumb:hover .play-overlay { background:rgba(0,0,0,0.45); }
+  .play-circle {
+    width:60px; height:60px; background:var(--accent); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    transform:scale(0.9); transition:transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 0 0 0 var(--accent-glow);
+  }
+  .video-thumb:hover .play-circle { transform:scale(1); box-shadow:0 8px 30px var(--accent-glow); }
+  .play-circle svg { width:20px; height:20px; fill:#0a0a0f; margin-left:4px; }
+
+  /* CONTACT */
+  #contact { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start; }
+  .contact-title {
+    font-family: var(--ff-display); font-size: clamp(2.5rem,5vw,5rem);
+    font-weight: 700; line-height: 0.95; letter-spacing: -0.03em;
+    text-transform: uppercase; margin-bottom: 2rem;
+  }
+  .contact-title em { font-style: normal; color: var(--accent); display: block; }
+  .contact-info { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
+  .contact-info-item { display: flex; flex-direction: column; gap: 0.2rem; }
+  .contact-info-label { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+  .contact-info-val { font-size: 0.95rem; color: var(--fg); text-decoration: none; transition: color 0.2s; }
+  .contact-info-val:hover { color: var(--accent); }
+  .social-links { display: flex; gap: 1rem; margin-top: 2rem; }
+  .social-link {
+    font-family: var(--ff-display); font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+    text-decoration: none; padding: 0.6rem 1.2rem;
+    border: 1px solid var(--border); border-radius: 100px; transition: color 0.2s, border-color 0.2s;
+  }
+  .social-link:hover { color: var(--fg); border-color: var(--fg); }
+
+  /* FORM */
+  .contact-form { display: flex; flex-direction: column; gap: 1.25rem; }
+  .form-field { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-field label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+  .form-field input, .form-field select, .form-field textarea {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+    color: var(--fg); font-family: var(--ff-body); font-size: 0.95rem;
+    padding: 0.85rem 1rem; outline: none; transition: border-color 0.2s; -webkit-appearance: none;
+  }
+  .form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: var(--accent); }
+  .form-field textarea { resize: vertical; min-height: 130px; }
+  .form-field select option { background: var(--bg2); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .btn-submit {
+    font-family: var(--ff-display); font-size: 0.85rem; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: #0a0a0f; background: var(--accent); border: none;
+    padding: 1rem 2rem; border-radius: 100px; cursor: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    align-self: flex-start; display: flex; align-items: center; gap: 0.6rem;
+  }
+  .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 40px var(--accent-glow); }
+  .btn-submit svg { width:16px; height:16px; fill:#0a0a0f; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border); padding: 2.5rem 3rem;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1.5rem;
+  }
+  .footer-logo { font-family: var(--ff-display); font-size: 0.9rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
+  .footer-copy { font-size: 0.75rem; color: var(--muted); }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--fg); }
+
+  /* REVEAL */
+  .reveal { opacity:0; transform:translateY(32px); transition:opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity:1; transform:none; }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  @media (max-width: 900px) {
+    nav { padding: 1.25rem 1.5rem; }
+    .nav-links { display: none; }
+    #hero { grid-template-columns: 1fr; }
+    .hero-right { position: absolute; inset: 0; z-index: 0; }
+    .hero-left { z-index: 2; padding: 8rem 1.5rem 12rem; }
+    .hero-stats { left: 1.5rem; bottom: 2rem; gap: 2rem; }
+    section { padding: 5rem 1.5rem; }
+    #about, .works-inner, #contact { grid-template-columns: 1fr; gap: 3rem; }
+    .services-grid { grid-template-columns: 1fr 1fr; }
+    .videos-grid { grid-template-columns: 1fr; }
+    .spotify-grid { grid-template-columns: 1fr; }
+    .stat-number { font-size: 2rem; }
+    footer { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">Eze Camarón</a>
+  <ul class="nav-links">
+    <li><a href="#about">Biografía</a></li>
+    <li><a href="#services">Sonido en Vivo</a></li>
+    <li><a href="#works">Mix & Master</a></li>
+    <li><a href="#videos">Videos</a></li>
+    <li><a href="#contact">Contacto</a></li>
+  </ul>
+  <a href="https://api.whatsapp.com/send?text=Hola%20quisiera%20consultar%20sobre%20&phone=5491123471589" class="nav-cta" target="_blank">Consultar</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-tag">Buenos Aires, Argentina · 1989</div>
+    <h1 class="hero-title">
+      <div class="glitch" data-text="EZE">EZE</div>
+      <div style="color:var(--accent)">CAMARÓN</div>
+    </h1>
+    <p class="hero-desc">Productor musical, compositor y sonidista. <strong>Audio de alta calidad</strong> para recitales, festivales, grabaciones y producciones audiovisuales.</p>
+    <div class="hero-actions">
+      <a href="#about" class="btn-primary">Ver Biografía</a>
+      <a href="#videos" class="btn-ghost">Ver Videos</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img class="hero-img" src="https://ezecastrocamaron2.vercel.app/img/principal.jpg" alt="Eze Camarón">
+    <div class="hero-img-overlay"></div>
+    <div class="waveform-hero" id="waveformHero"></div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-number"><span>+15</span></div>
+      <div class="stat-label">Años de experiencia</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number"><span>2</span></div>
+      <div class="stat-label">Discos solistas</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number"><span>+20</span></div>
+      <div class="stat-label">Artistas colaborados</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="marqueeTrack"></div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-left reveal">
+    <div class="about-photo-wrap">
+      <img src="https://ezecastrocamaron2.vercel.app/img/bio.jpg" alt="Eze Camarón">
+      <div class="about-photo-accent">Productor · Compositor · Sonidista</div>
+    </div>
+  </div>
+  <div class="about-right">
+    <div class="section-label reveal">Sobre mí</div>
+    <h2 class="section-title reveal reveal-delay-1">BIOGRAFÍA</h2>
+    <p class="about-body reveal reveal-delay-2">
+      Soy <strong>Eze Camarón</strong> (Argentina, 1989), compositor, productor musical y sonidista con amplia experiencia en la creación, grabación y mezcla de proyectos musicales y audiovisuales.<br><br>
+      Me formé como guitarrista y multiinstrumentista, participando en proyectos como <strong>Camarones del Aljibe, Malibú y El Club de los Elefantes</strong>. Como solista edité <strong>Acorde Sonhando</strong> (2020) y <strong>Livertad</strong> (2022). Actualmente enfoco mi trabajo en la <strong>composición de soundtracks</strong> y música para medios audiovisuales.
+    </p>
+    <div class="artists-list reveal reveal-delay-3">
+      <div class="artists-label">Artistas con quienes trabajé</div>
+      <div class="artists-names">Etereofrecuencers · Emiliano Pistorio · Rodrigo Siamarella · Franco Dezzuto · Lea Camarón · Que Bueno Que Viniste · Santi Martínez · Lauti Rombolá · Nattaline · Dana Salguero · Naibaf · Episteme · Capitán Berrako · Ignacio Andrés</div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="services-header">
+    <div>
+      <div class="section-label reveal">Lo que hago</div>
+      <h2 class="section-title reveal reveal-delay-1">SONIDO<br>EN VIVO</h2>
+    </div>
+    <a href="https://api.whatsapp.com/send?text=Hola%20quisiera%20consultar%20sobre%20sonido%20en%20vivo&phone=5491123471589" target="_blank" class="btn-primary reveal reveal-delay-2">Consultar por WhatsApp</a>
+  </div>
+  <div class="services-grid reveal">
+
+    <!-- Card 1: Sonido en Vivo -->
+    <div class="service-card">
+      <div class="service-num">01</div>
+      <div class="service-icon">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Speaker + sound waves icon -->
+          <rect x="2" y="11" width="10" height="14" rx="2" fill="var(--accent)" opacity="0.9"/>
+          <polygon points="12,11 22,4 22,32 12,25" fill="var(--accent)" opacity="0.7"/>
+          <path d="M25 10 Q32 18 25 26" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/>
+          <path d="M27.5 6.5 Q37 18 27.5 29.5" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.4"/>
+        </svg>
+      </div>
+      <div class="service-name">Sonido en Vivo</div>
+      <div class="service-desc">Sonido para bandas, DJ y espectáculos con equipos profesionales de primer nivel. Tratamiento sonoro personalizado por show.</div>
+    </div>
+
+    <!-- Card 2: Eventos Empresariales -->
+    <div class="service-card">
+      <div class="service-num">02</div>
+      <div class="service-icon">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Microphone + podium -->
+          <rect x="14" y="2" width="8" height="14" rx="4" fill="var(--accent)" opacity="0.9"/>
+          <path d="M8 13 Q8 22 18 22 Q28 22 28 13" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/>
+          <line x1="18" y1="22" x2="18" y2="29" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+          <rect x="10" y="29" width="16" height="3" rx="1.5" fill="var(--accent)" opacity="0.5"/>
+        </svg>
+      </div>
+      <div class="service-name">Eventos Empresariales</div>
+      <div class="service-desc">Refuerzo sonoro para eventos corporativos y conferencias. Claridad y equilibrio para que el mensaje llegue perfecto.</div>
+    </div>
+
+    <!-- Card 3: Alquiler de Equipos -->
+    <div class="service-card">
+      <div class="service-num">03</div>
+      <div class="service-icon">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Mixing console / sliders -->
+          <rect x="2" y="6" width="32" height="24" rx="3" stroke="var(--accent)" stroke-width="1.5" opacity="0.5"/>
+          <line x1="9" y1="10" x2="9" y2="26" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+          <line x1="18" y1="10" x2="18" y2="26" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+          <line x1="27" y1="10" x2="27" y2="26" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+          <rect x="6" y="13" width="6" height="5" rx="2" fill="var(--accent)" opacity="0.9"/>
+          <rect x="15" y="18" width="6" height="5" rx="2" fill="var(--accent)" opacity="0.9"/>
+          <rect x="24" y="11" width="6" height="5" rx="2" fill="var(--accent)" opacity="0.9"/>
+        </svg>
+      </div>
+      <div class="service-name">Alquiler de Equipos</div>
+      <div class="service-desc">Alquiler y operación de equipos de audio profesional. Con o sin operador técnico, el sonido que necesitás.</div>
+    </div>
+
+    <!-- Card 4: Asesoramiento Técnico -->
+    <div class="service-card">
+      <div class="service-num">04</div>
+      <div class="service-icon">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Headphones + checkmark -->
+          <path d="M6 18 Q6 8 18 8 Q30 8 30 18" stroke="var(--accent)" stroke-width="2" fill="none" opacity="0.8"/>
+          <rect x="2" y="17" width="7" height="10" rx="3" fill="var(--accent)" opacity="0.9"/>
+          <rect x="27" y="17" width="7" height="10" rx="3" fill="var(--accent)" opacity="0.9"/>
+          <polyline points="11,27 15,31 25,21" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+        </svg>
+      </div>
+      <div class="service-name">Asesoramiento Técnico</div>
+      <div class="service-desc">Asesoramiento personalizado antes y durante el evento. Responsabilidad, puntualidad y compromiso en cada proyecto.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- MIX & MASTER -->
+<section id="works">
+  <div class="works-inner">
+    <div class="works-text">
+      <div class="section-label reveal">Trabajos</div>
+      <h2 class="section-title reveal reveal-delay-1">MIX &<br>MASTER</h2>
+      <p class="works-body reveal reveal-delay-2">Multi-géneros. Desde acústico hasta electrónico, cada producción recibe el tratamiento técnico y artístico que necesita para sonar al máximo nivel.</p>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap" class="reveal reveal-delay-3">
+        <a href="https://www.youtube.com/@ezecastrocamaron723" target="_blank" class="btn-primary">Playlist Completa</a>
+        <a href="https://api.whatsapp.com/send?text=Hola%20quisiera%20consultar%20sobre%20Mix%20%26%20Master&phone=5491123471589" target="_blank" class="btn-ghost">Consultar</a>
+      </div>
+    </div>
+    <div class="works-img-wrap reveal reveal-delay-1">
+      <img src="https://ezecastrocamaron2.vercel.app/img/mix_master.jpg" alt="Estudio Mix & Master">
+      <div class="works-badge">
+        <span>BUE</span>
+        Buenos Aires · Argentina
+      </div>
+    </div>
+  </div>
+
+  <!-- SPOTIFY EMBEDS -->
+  <div class="spotify-grid reveal">
+    <div class="spotify-card">
+      <div class="spotify-label">
+        <strong>Multi-géneros</strong>
+        Playlist completa
+      </div>
+      <iframe src="https://open.spotify.com/embed/playlist/3RJuCQPJFOjqn070NA3N6h?utm_source=generator&theme=0" height="500" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    </div>
+    <div class="spotify-card">
+      <div class="spotify-label">
+        <strong>Mix Master Acústico</strong>
+        Sonido acústico
+      </div>
+      <iframe src="https://open.spotify.com/embed/playlist/7eVFipLsL9bVkBx2oRJxqf?utm_source=generator&theme=0" height="500" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- VIDEOS -->
+<section id="videos">
+  <div class="videos-header">
+    <div>
+      <div class="section-label reveal">Canal de YouTube</div>
+      <h2 class="section-title reveal reveal-delay-1">MIS VIDEOS</h2>
+    </div>
+    <a href="https://www.youtube.com/@ezecastrocamaron723" target="_blank" class="btn-ghost reveal reveal-delay-2">Ver canal completo ↗</a>
+  </div>
+  <div class="videos-grid">
+    <a class="video-thumb reveal" href="https://www.youtube.com/watch?v=kJld3gVSlZI" target="_blank">
+      <img src="https://img.youtube.com/vi/kJld3gVSlZI/maxresdefault.jpg" alt="Video 1">
+      <div class="play-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+    </a>
+    <a class="video-thumb reveal reveal-delay-1" href="https://www.youtube.com/watch?v=W8vOUqUei_Q" target="_blank">
+      <img src="https://img.youtube.com/vi/W8vOUqUei_Q/maxresdefault.jpg" alt="Video 2">
+      <div class="play-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+    </a>
+    <a class="video-thumb reveal reveal-delay-2" href="https://www.youtube.com/watch?v=yUbAYTV4PvM" target="_blank">
+      <img src="https://img.youtube.com/vi/yUbAYTV4PvM/maxresdefault.jpg" alt="Video 3">
+      <div class="play-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+    </a>
+    <a class="video-thumb reveal reveal-delay-3" href="https://www.youtube.com/watch?v=xwkhM7bNnNk" target="_blank">
+      <img src="https://img.youtube.com/vi/xwkhM7bNnNk/maxresdefault.jpg" alt="Video 4">
+      <div class="play-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+    </a>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-left">
+    <div class="section-label reveal">Trabajemos juntos</div>
+    <h2 class="contact-title reveal reveal-delay-1">HAGAMOS<br>ALGO<br><em>GRANDE.</em></h2>
+    <div class="contact-info reveal reveal-delay-2">
+      <div class="contact-info-item">
+        <span class="contact-info-label">Email</span>
+        <a href="/cdn-cgi/l/email-protection#aacfd0cf84c9cbd9ded8c584c9cbc7cbd8c5c4eacdc7cbc3c684c9c5c7" class="contact-info-val"><span class="__cf_email__" data-cfemail="ceabb4abe0adafbdbabca1e0adafa3afbca1a08ea9a3afa7a2e0ada1a3">[email&#160;protected]</span></a>
+      </div>
+      <div class="contact-info-item">
+        <span class="contact-info-label">WhatsApp</span>
+        <a href="https://api.whatsapp.com/send?phone=5491123471589" target="_blank" class="contact-info-val">+54 9 11 2347 1589</a>
+      </div>
+      <div class="contact-info-item">
+        <span class="contact-info-label">Ubicación</span>
+        <span class="contact-info-val">Buenos Aires, Argentina</span>
+      </div>
+    </div>
+    <div class="social-links reveal reveal-delay-3">
+      <a href="https://www.instagram.com/ezecamaronaudio/" target="_blank" class="social-link">Instagram ↗</a>
+      <a href="https://www.youtube.com/@ezecastrocamaron723" target="_blank" class="social-link">YouTube ↗</a>
+    </div>
+  </div>
+  <div class="contact-right reveal reveal-delay-1">
+    <form class="contact-form" onsubmit="handleForm(event)">
+      <div class="form-row">
+        <div class="form-field">
+          <label>Nombre</label>
+          <input type="text" placeholder="Tu nombre" required>
+        </div>
+        <div class="form-field">
+          <label>Email</label>
+          <input type="email" placeholder="tu@email.com" required>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Tipo de proyecto</label>
+        <select>
+          <option value="">Seleccioná una opción</option>
+          <option>Sonido en Vivo — Recital / Banda</option>
+          <option>Sonido en Vivo — Evento Empresarial</option>
+          <option>Alquiler de Equipos</option>
+          <option>Mix & Master</option>
+          <option>Producción Musical</option>
+          <option>Soundtrack / Audiovisual</option>
+          <option>Otro</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Mensaje</label>
+        <textarea placeholder="Contame sobre tu proyecto…"></textarea>
+      </div>
+      <button class="btn-submit" type="submit">
+        Enviar mensaje
+        <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+      </button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Eze Camarón</div>
+  <div class="footer-copy">©2025 Todos los derechos reservados · Buenos Aires</div>
+  <div class="footer-links">
+    <a href="https://www.instagram.com/ezecamaronaudio/" target="_blank">Instagram</a>
+    <a href="https://www.youtube.com/@ezecastrocamaron723" target="_blank">YouTube</a>
+    <a href="/cdn-cgi/l/email-protection#5f3a253a713c3e2c2b2d30713c3e323e2d30311f38323e3633713c3032">Email</a>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// CURSOR
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0, my=0, rx=0, ry=0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx+'px'; cursor.style.top = my+'px';
+});
+(function animRing() {
+  rx += (mx-rx)*0.12; ry += (my-ry)*0.12;
+  ring.style.left = rx+'px'; ring.style.top = ry+'px';
+  requestAnimationFrame(animRing);
+})();
+document.querySelectorAll('a, button, .service-card').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.style.transform='translate(-50%,-50%) scale(2.5)'; ring.style.opacity='0.3'; });
+  el.addEventListener('mouseleave', () => { cursor.style.transform='translate(-50%,-50%) scale(1)'; ring.style.opacity='1'; });
+});
+
+// NAV SCROLL
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// WAVEFORM HERO
+const waveWrap = document.getElementById('waveformHero');
+for (let i=0; i<48; i++) {
+  const bar = document.createElement('div');
+  bar.className = 'bar';
+  bar.style.setProperty('--dur', (0.4+Math.random()*0.8).toFixed(2)+'s');
+  bar.style.setProperty('--delay', (Math.random()*0.8).toFixed(2)+'s');
+  bar.style.height = (8+Math.random()*80)+'px';
+  bar.style.opacity = (0.2+Math.random()*0.5).toFixed(2);
+  waveWrap.appendChild(bar);
+}
+
+// MARQUEE
+const items = ['Producción Musical','Mix & Master','Sonido en Vivo','Soundtracks','Buenos Aires','Guitarra','Composición','Festivales','Eventos','Producción Musical','Mix & Master','Sonido en Vivo','Soundtracks','Buenos Aires','Guitarra','Composición','Festivales','Eventos'];
+const track = document.getElementById('marqueeTrack');
+track.innerHTML = items.map(t=>`<span class="marquee-item"><span class="dot"></span>${t}</span>`).join('')
+  + items.map(t=>`<span class="marquee-item"><span class="dot"></span>${t}</span>`).join('');
+
+// REVEAL
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(r => obs.observe(r));
+
+// FORM
+function handleForm(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('.btn-submit');
+  btn.innerHTML = '✓ Mensaje enviado';
+  btn.style.background = '#2a9d8f';
+  setTimeout(() => {
+    btn.innerHTML = 'Enviar mensaje <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:#0a0a0f"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>';
+    btn.style.background = '';
+  }, 3000);
+}
+</script>
+</body>
+</html>
